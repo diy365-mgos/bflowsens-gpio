@@ -1,4 +1,5 @@
 #include "mgos.h"
+#include "mg_bthing_sdk.h"
 #include "mgos_bflowsens_gpio.h"
 #include "mgos_bflowsens.h"
 
@@ -22,8 +23,8 @@ struct mg_bflowsens_gpio_cfg {
 
 void mg_bflowsens_gpio_timer_cb(void *arg) {
   struct mg_bflowsens_gpio_cfg *cfg = (struct mg_bflowsens_gpio_cfg *)arg;
-  float sample_duration = ((mgos_uptime_micros() - cfg->last_sample_time) / 1000); //ms
-  
+  float sample_duration = (mg_bthing_duration_micro(cfg->last_sample_time, mgos_uptime_micros()) / 1000); //ms
+
   // Frequency (Hz) = (1sec / (sample duration / pulse count))
   cfg->frequency = cfg->pulse_count == 0 ? 0 : (1000 / (sample_duration / cfg->pulse_count)); // Hz
 
