@@ -1,0 +1,24 @@
+author: DIY365
+type: lib
+description: Mongoose OS bFlowSensors GPIO Library
+version: 1.0
+
+sources:
+  - src
+
+includes:
+  - include
+
+filesystem:
+  - fs
+
+config_schema:
+
+libs:
+  - origin: https://github.com/diy365-mgos/bvar-dic
+  - origin: https://github.com/diy365-mgos/bflowsens
+
+tags:
+  - c
+
+manifest_version: 2017-09-29
