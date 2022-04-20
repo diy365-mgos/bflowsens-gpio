@@ -36,7 +36,8 @@ void mg_bflowsens_gpio_timer_cb(void *arg) {
   cfg->total_flow += (cfg->flow_rate * (sample_duration / 60000)); // L
 
   // Update sensor state
-  mg_bthing_update_state(MGOS_BFLOWSENS_THINGCAST(cfg->sensor), false);
+  mg_bthing_update_state(MGOS_BFLOWSENS_THINGCAST(cfg->sensor));
+  //mg_bthing_update_state(MGOS_BFLOWSENS_THINGCAST(cfg->sensor), false);
 
   if (cfg->pulse_count > 0) {
     // Restart counting pulses
