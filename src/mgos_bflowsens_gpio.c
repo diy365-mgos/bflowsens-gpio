@@ -17,6 +17,7 @@ struct mg_bflowsens_gpio_cfg {
   int64_t pulse_count;      // pulse counter
   float frequency;          // Hz
   float flow_rate;          // L/min
+  float partial_flow;       // L
   float total_flow;         // L
   int timer_id;
 };
@@ -32,8 +33,11 @@ void mg_bflowsens_gpio_timer_cb(void *arg) {
   // so flow rate (L/min) = frequency (Hz) / flow ratio
   cfg->flow_rate = cfg->frequency / cfg->flow_ratio; // L/min
 
-  // Total_flow (L) += flow rate (L/min) * sample duration (min)
-  cfg->total_flow += (cfg->flow_rate * (sample_duration / 60000)); // L
+  // Partial flow (L) = flow rate (L/min) * sample duration (min)
+  cfg->partial_flow =  (cfg->flow_rate * (sample_duration / 60000)); // L
+
+  // Total flow (L) is sum of all partial flows since last reboot
+  cfg->total_flow += cfg->partial_flow; // L
 
   // Update sensor state
   mgos_bthing_update_state(MGOS_BFLOWSENS_THINGCAST(cfg->sensor), false);
@@ -66,8 +70,9 @@ void mg_bflowsens_gpio_int_handler(int pin, void *arg) {
 bool mg_bflowsens_gpio_get_state_cb(mgos_bthing_t thing, mgos_bvar_t state, void *userdata) {
   struct mg_bflowsens_gpio_cfg *cfg = (struct mg_bflowsens_gpio_cfg *)userdata;
   if (thing && state && cfg) {
-    mgos_bvar_set_key_decimal(state, "flowRate", cfg->flow_rate);
-    mgos_bvar_set_key_decimal(state, "totalFlow", cfg->total_flow);
+    mgos_bvar_set_key_decimal(state, MGOS_BFLOWSENS_STATE_FLOW_RATE, cfg->flow_rate);
+    mgos_bvar_set_key_decimal(state, MGOS_BFLOWSENS_STATE_PARTIAL_FLOW, cfg->partial_flow);
+    mgos_bvar_set_key_decimal(state, MGOS_BFLOWSENS_STATE_TOTAL_FLOW, cfg->total_flow);
     return true;
   }
   return false;
