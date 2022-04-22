@@ -79,8 +79,8 @@ bool mg_bflowsens_gpio_get_state_cb(mgos_bthing_t thing, mgos_bvar_t state, void
 }
 
 bool mgos_bflowsens_gpio_attach(mgos_bflowsens_t sensor, 
-                                  int pin, enum mgos_gpio_pull_type pull_type,
-                                  bool high_pulse, float flow_ratio) {
+                                int pin, enum mgos_gpio_pull_type pull_type,
+                                bool high_pulse, float flow_ratio) {
   if (mgos_gpio_setup_input(pin, pull_type)) {
     if (mgos_gpio_enable_int(pin)) {
       struct mg_bflowsens_gpio_cfg *cfg = calloc(1, sizeof(struct mg_bflowsens_gpio_cfg));
